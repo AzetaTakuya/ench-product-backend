@@ -12,33 +12,36 @@ router.get('/', (req, res) => {
 
 // カテゴリ追加
 router.post('/', (req, res) => {
-  const { name, parent_id = null } = req.body;
+  const { name, parent_id = null, icon = null } = req.body;  // iconも受け取る
   if (!name) return res.status(400).json({ error: 'カテゴリ名は必須です。' });
 
-  db.run('INSERT INTO categories (name, parent_id) VALUES (?, ?)', [name, parent_id], function (err) {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(201).json({ id: this.lastID, name, parent_id });
-  });
+  db.run(
+    'INSERT INTO categories (name, parent_id, icon) VALUES (?, ?, ?)',
+    [name, parent_id, icon],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(201).json({ id: this.lastID, name, parent_id, icon });
+    }
+  );
 });
 
 // カテゴリ更新
 router.put('/:id', (req, res) => {
-  const { name, parent_id = null } = req.body;
+  const { name, parent_id = null, icon = null } = req.body;  // iconも受け取る
   const { id } = req.params;
 
   if (!name) return res.status(400).json({ error: 'カテゴリ名は必須です。' });
 
   db.run(
-    'UPDATE categories SET name = ?, parent_id = ? WHERE id = ?',
-    [name, parent_id, id],
+    'UPDATE categories SET name = ?, parent_id = ?, icon = ? WHERE id = ?',
+    [name, parent_id, icon, id],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
       if (this.changes === 0) return res.status(404).json({ error: 'カテゴリが見つかりません。' });
-      res.json({ id, name, parent_id });
+      res.json({ id, name, parent_id, icon });
     }
   );
 });
-
 
 // カテゴリ削除
 router.delete('/:id', (req, res) => {

@@ -21,6 +21,7 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title VARCHAR(255) NOT NULL,
       body TEXT NOT NULL,
+      thumbnail TEXT,
       summary VARCHAR(512),
       is_published BOOLEAN NOT NULL DEFAULT 0,
       status VARCHAR(50) DEFAULT 'draft',
@@ -33,7 +34,8 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS categories (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name VARCHAR(100) NOT NULL,
+      name VARCHAR(100) NOT NULL UNIQUE,
+      icon VARCHAR(100),
       parent_id INTEGER,
       FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE SET NULL
     )

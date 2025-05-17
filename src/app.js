@@ -17,7 +17,7 @@ const articlesAPI = require('./api/articles');
 const categoryAPI = require('./api/categories');
 const tagsAPI = require('./api/tags');
 
-app.use('/api/articles', articlesRouter);
+app.use('/api/articles', articlesAPI);
 app.use('/api/categories', categoryAPI);
 app.use('/api/tags', tagsAPI);
 // HTTPサーバーを作成
