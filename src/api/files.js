@@ -38,11 +38,13 @@ router.post('/', upload.single('file'), (req, res) => {
   const { originalname, filename, mimetype, size } = req.file;
   const fileUrl = `/public/${filename}`;
 
+  const _originalname = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
+
   const sql = `
     INSERT INTO uploaded_files (original_name, stored_name, mime_type, size, url)
     VALUES (?, ?, ?, ?, ?)
   `;
-  const values = [originalname, filename, mimetype, size, fileUrl];
+  const values = [_originalname, filename, mimetype, size, fileUrl];
 
   db.run(sql, values, function (err) {
     if (err) {

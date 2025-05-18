@@ -21,7 +21,7 @@ const fileAPI = require('./api/files');
 app.use('/api/articles', articlesAPI);
 app.use('/api/categories', categoryAPI);
 app.use('/api/tags', tagsAPI);
-app.use('/api/upload', fileAPI);
+app.use('/api/files', fileAPI);
 // HTTPサーバーを作成
 const server = http.createServer(app)
 
