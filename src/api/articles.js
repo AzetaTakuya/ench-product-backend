@@ -4,7 +4,7 @@ const db = require('../db');
 
 // 全記事を取得
 router.get('/', (req, res) => {
-  db.all('SELECT * FROM articles', [], (err, rows) => {
+  db.all('SELECT * FROM articles ORDER BY updated_at DESC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
