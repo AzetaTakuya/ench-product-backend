@@ -13,6 +13,14 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 })
 
+db.run('PRAGMA foreign_keys = ON', (err) => {
+  if (err) {
+    console.error('Failed to enable foreign keys:', err.message)
+  } else {
+    console.log('Foreign key constraint enabled.')
+  }
+})
+
 // テーブルを作成
 db.serialize(() => {
   // articles テーブル

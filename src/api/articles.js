@@ -13,12 +13,34 @@ router.get('/', (req, res) => {
 // 単一記事を取得
 router.get('/:id', (req, res) => {
   const id = req.params.id;
-  db.get('SELECT * FROM articles WHERE id = ?', [id], (err, row) => {
+
+  db.get('SELECT * FROM articles WHERE id = ?', [id], (err, article) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'Not found' });
-    res.json(row);
+    if (!article) return res.status(404).json({ error: 'Not found' });
+
+    // categoryIds を取得
+    db.all('SELECT category_id FROM article_categories WHERE article_id = ?', [id], (err, categoryRows) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      const categoryIds = categoryRows.map(row => row.category_id);
+
+      // tagIds を取得
+      db.all('SELECT tag_id FROM article_tags WHERE article_id = ?', [id], (err, tagRows) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const tagIds = tagRows.map(row => row.tag_id);
+
+        // 最終レスポンス
+        res.json({
+          ...article,
+          categoryIds,
+          tagIds
+        });
+      });
+    });
   });
 });
+
 
 // 記事の追加
 router.post('/', (req, res) => {
@@ -102,13 +124,37 @@ router.put('/:id', (req, res) => {
 
 
 // 記事の削除
+// router.delete('/:id', (req, res) => {
+//   const id = req.params.id;
+//   db.run('DELETE FROM articles WHERE id = ?', [id], function (err) {
+//     if (err) return res.status(500).json({ error: err.message });
+//     if (this.changes === 0) return res.status(404).json({ error: 'Not found' });
+//     res.json({ message: 'Deleted successfully' });
+//   });
+// });
+// debug
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
-  db.run('DELETE FROM articles WHERE id = ?', [id], function (err) {
+
+  // 削除前の中間テーブルの件数を表示
+  db.get('SELECT COUNT(*) AS count FROM article_tags', (err, beforeRow) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (this.changes === 0) return res.status(404).json({ error: 'Not found' });
-    res.json({ message: 'Deleted successfully' });
+    console.log(`Before delete: article_tags count = ${beforeRow.count}`);
+
+    db.run('DELETE FROM articles WHERE id = ?', [id], function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0) return res.status(404).json({ error: 'Not found' });
+
+      // 削除後の中間テーブルの件数を表示
+      db.get('SELECT COUNT(*) AS count FROM article_tags', (err, afterRow) => {
+        if (err) return res.status(500).json({ error: err.message });
+        console.log(`After delete: article_tags count = ${afterRow.count}`);
+
+        res.json({ message: 'Deleted successfully' });
+      });
+    });
   });
 });
+
 
 module.exports = router;
