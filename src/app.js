@@ -16,10 +16,12 @@ setupStaticFiles(app)
 const articlesAPI = require('./api/articles');
 const categoryAPI = require('./api/categories');
 const tagsAPI = require('./api/tags');
+const uploadAPI = require('./api/upload');
 
 app.use('/api/articles', articlesAPI);
 app.use('/api/categories', categoryAPI);
 app.use('/api/tags', tagsAPI);
+app.use('/api/upload', uploadAPI);
 // HTTPサーバーを作成
 const server = http.createServer(app)
 
