@@ -7,7 +7,7 @@ const db = require('../db'); // SQLite接続
 
 const router = express.Router();
 
-const uploadDir = path.join(__dirname, '../public');
+const uploadDir = path.join(__dirname, '../../public/')
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -36,7 +36,7 @@ router.post('/', upload.single('file'), (req, res) => {
   }
 
   const { originalname, filename, mimetype, size } = req.file;
-  const fileUrl = `/public/${filename}`;
+  const fileUrl = `http://localhost:4000/${filename}`;
 
   const _originalname = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
 
