@@ -59,6 +59,21 @@ router.post('/', upload.single('file'), (req, res) => {
 });
 
 /**
+ * GET /api/upload
+ * アップロード済みファイルの一覧を取得
+ */
+router.get('/', (req, res) => {
+  const sql = 'SELECT id, original_name, stored_name, mime_type, size, url, uploaded_at FROM uploaded_files ORDER BY uploaded_at DESC';
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'DB取得エラー', details: err });
+    }
+    res.json({ files: rows });
+  });
+});
+
+
+/**
  * DELETE /api/upload/:id
  * ファイルを削除し、DBからも削除
  */
